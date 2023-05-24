@@ -41,7 +41,6 @@ export default function RLogin() {
 	const toast = useToast();
 
 	async function login() {
-		const email = document.getElementById("email");
 		const password = document.getElementById("password");
 		const status = await dispatch(userLogin(loginInput));
 		console.log(status);
@@ -99,7 +98,7 @@ export default function RLogin() {
 								<FormLabel>Username / Email</FormLabel>
 								<Input
 									placeholder="Enter your Email or Username"
-									type="text"
+									type="email"
 									onChange={inputHandler}
 									border={"1px #878787 solid"}
 									id="email"

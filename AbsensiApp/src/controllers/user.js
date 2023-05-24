@@ -6,6 +6,7 @@ const { nanoid } = require("nanoid");
 const moment = require("moment");
 const privateKey = process.env.private_key;
 const url_image = process.env.URL_IMAGE;
+const sharp = require("sharp");
 const userController = {
 	getAll: async (req, res) => {
 		try {
@@ -227,8 +228,10 @@ const userController = {
 		}
 	},
 	uploadAvatar: async (req, res) => {
-		const { filename } = req.file;
+		console.log("hello");
 
+		const { filename } = req.file;
+		console.log(filename);
 		await db.User.update(
 			{
 				avatar_url: url_image + filename,
@@ -245,6 +248,54 @@ const userController = {
 				id: req.params.id,
 			},
 		}).then((result) => res.send(result));
+	},
+	uploadAvatarV2: async (req, res) => {
+		const buffer = await sharp(req.file.buffer)
+			.resize(250, 250)
+			.png()
+			.toBuffer();
+
+		let fullUrl =
+			req.protocol +
+			"://" +
+			req.get("host") +
+			"/users/image/render/" +
+			req.params.id;
+
+		console.log(fullUrl);
+
+		await db.User.update(
+			{
+				avatar_url: fullUrl,
+				// avatar_url: url + "users/image/render" + req.params.id,
+				avatar_blob: buffer,
+			},
+			{
+				where: {
+					id: req.params.id,
+				},
+			}
+		);
+		res.send({
+			message: "Berhasil upload",
+		});
+	},
+
+	renderAvatar: async (req, res) => {
+		try {
+			await db.User.findOne({
+				where: {
+					id: req.params.id,
+				},
+			}).then((result) => {
+				res.set("Content-type", "image/png");
+				res.send(result.dataValues.avatar_blob);
+			});
+		} catch (error) {
+			return res.send({
+				message: err.message,
+			});
+		}
 	},
 };
 module.exports = userController;

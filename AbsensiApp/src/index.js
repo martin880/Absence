@@ -15,7 +15,7 @@ const AttendanceLog = db.AttendanceLogs;
 // AttendanceLog.sync();
 // User.sync();
 // User.sync({ force: true }).then(() => console.log("Sync Complete"));
-// db.sequelize.sync({ force: true }).then(() => console.log("Sync Complete"));
+// db.sequelize.sync({ alter: true }).then(() => console.log("Sync 'Complete"));
 
 app.use("/main", routes.mainRoutes);
 app.use("/company", routes.companyRoutes);

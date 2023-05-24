@@ -12,6 +12,8 @@ const fileUploader = ({
 		},
 
 		filename: (req, file, cb) => {
+			console.log(file);
+
 			const fileExtension = file.mimetype.split("/")[1];
 			const filename = `${prefix}_${nanoid()}.${fileExtension}`;
 			cb(null, filename);
@@ -35,7 +37,14 @@ const upload = multer({
 	},
 	fileFilter: (req, file, cb) => {
 		console.log(file);
-		if (file.mimetype.split("/")[0] != "image") {
+
+		const file_type = file.mimetype.split("/")[0];
+		const format_file = file.mimetype.split("/")[1];
+
+		if (
+			file_type != "image" &&
+			(format_file != "jpg" || format_file != "png")
+		) {
 			return cb(null, false);
 		}
 		cb(null, true);

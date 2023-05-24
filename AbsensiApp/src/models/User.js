@@ -6,6 +6,7 @@ module.exports = (sequelize, Sequelize) => {
 		password: Sequelize.STRING,
 		company_id: Sequelize.INTEGER,
 		avatar_url: Sequelize.STRING,
+		avatar_blob: Sequelize.BLOB("long"),
 	});
 	return User;
 };

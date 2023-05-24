@@ -7,6 +7,7 @@ import {
 	Tr,
 	Th,
 	Td,
+	Input,
 	TableCaption,
 	TableContainer,
 	Stat,
@@ -19,6 +20,7 @@ import {
 	Spacer,
 	useToast,
 	Text,
+	Stack,
 	Avatar,
 } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
@@ -30,10 +32,12 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { auth_types } from "../redux/types";
+import { useRef } from "react";
 
 export default function RDashboard() {
 	const dispatch = useDispatch();
 	const nav = useNavigate();
+	const inputFileRef = useRef(null);
 	const moment = require("moment");
 	<script src="moment.js"></script>;
 	const date = new Date();
@@ -60,6 +64,13 @@ export default function RDashboard() {
 		"November",
 		"December",
 	];
+	const [selectedFile, setSelectedFile] = useState(null);
+
+	const handleFile = (e) => {
+		setSelectedFile(e.target.files[0]);
+		console.log(e.target.files[0]);
+	};
+
 	const [clockedIn, setClockedIn] = useState(false);
 	const [currentTime, setCurrentTime] = useState(date);
 	const [clock, setClock] = useState("");
@@ -148,6 +159,35 @@ export default function RDashboard() {
 			}
 		});
 	}
+
+	async function uploadAvatar() {
+		// alert("Asdsada");
+		const formData = new FormData();
+		formData.append("avatar", selectedFile);
+		console.log(selectedFile);
+		let user;
+		await axios
+			.post("http://localhost:3500/users/image/v1/1", formData)
+			.then((res) => {
+				user = res.data;
+			});
+
+		console.log(user);
+		if (user) {
+			await dispatch({
+				type: "login",
+				payload: user,
+			});
+
+			toast({
+				title: "Success Changes Avatar",
+				status: "success",
+				duration: 3000,
+				isClosable: false,
+			});
+		}
+	}
+
 	return (
 		<>
 			<Flex minW={"100vw"} justifyContent={"center"}>
@@ -164,10 +204,16 @@ export default function RDashboard() {
 					<Flex h={"60%"} flexDir={"column"}>
 						<Flex flexDir={"column"} alignItems={"center"} color={"gray.500"}>
 							<Flex p={4}>
-								Welcome, <Text fontWeight={"bold"}> {userSelector.name}</Text>
+								Welcome,{" "}
+								<Text fontWeight={"bold"} color={"blue.300"}>
+									{" "}
+									{userSelector.name}
+								</Text>
 							</Flex>
 							<Spacer />
 							<Avatar src={userSelector.avatar_url} />
+							<Spacer />
+
 							<Spacer />
 							<Flex fontSize={"55px"} fontWeight={"bold"} color={"black"}>
 								{currentTime.getHours().toString() > 9
@@ -187,20 +233,45 @@ export default function RDashboard() {
 						</Flex>
 						<Flex justifyContent={"center"} alignItems={"center"}>
 							<Flex className="detail">
-								<Flex
-									minH={"100px"}
-									w={"100%"}
-									flexDir={"column"}
-									alignItems={"center"}
-								>
-									<Stat w={"100%"}>
-										<StatLabel textAlign={"center"}>Working Hour</StatLabel>
-										<StatNumber textAlign={"center"}>09:00 - 17:00</StatNumber>
-										<StatHelpText textAlign={"center"}>
-											Western Indonesian Time
-										</StatHelpText>
-									</Stat>
-								</Flex>
+								<Stack>
+									<Flex
+										minH={"100px"}
+										w={"100%"}
+										flexDir={"column"}
+										alignItems={"center"}
+									>
+										<Stat w={"100%"}>
+											<StatLabel textAlign={"center"}>Working Hour</StatLabel>
+											<StatNumber textAlign={"center"}>
+												09:00 - 17:00
+											</StatNumber>
+											<StatHelpText textAlign={"center"}>
+												Western Indonesian Time
+											</StatHelpText>
+										</Stat>
+									</Flex>
+									<Input
+										accept="image/png, image/jpeg"
+										ref={inputFileRef}
+										type="file"
+										display={"none"}
+										onChange={handleFile}
+									/>
+									<Button
+										colorScheme={"facebook"}
+										w={"full"}
+										onClick={() => inputFileRef.current.click()}
+									>
+										Select Avatar
+									</Button>
+									<Button
+										colorScheme={"twitter"}
+										w={"full"}
+										onClick={uploadAvatar}
+									>
+										Change Avatar
+									</Button>
+								</Stack>
 								<Flex
 									h={"60%"}
 									w={"100%"}

@@ -196,17 +196,6 @@ export default function RRegister() {
 								</FormControl>
 
 								<FormControl>
-									<FormLabel>Address</FormLabel>
-									<Input
-										type="text"
-										id="address"
-										onChange={inputHandler}
-										placeholder="Enter your address"
-									/>
-									{formik.errors.address}
-								</FormControl>
-
-								<FormControl>
 									<FormLabel>Email</FormLabel>
 									<Input
 										type="text"
@@ -215,6 +204,17 @@ export default function RRegister() {
 										placeholder="Enter your email"
 									/>
 									{formik.errors.email}
+								</FormControl>
+
+								<FormControl>
+									<FormLabel>Address</FormLabel>
+									<Input
+										type="text"
+										id="address"
+										onChange={inputHandler}
+										placeholder="Enter your address"
+									/>
+									{formik.errors.address}
 								</FormControl>
 
 								<FormControl>

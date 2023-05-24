@@ -20,8 +20,10 @@ import {
 	Spacer,
 	useToast,
 	Text,
+	IconButton,
 	Stack,
 	Avatar,
+	useColorMode,
 } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { RxDashboard } from "react-icons/rx";
@@ -33,6 +35,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { auth_types } from "../redux/types";
 import { useRef } from "react";
+import { FaSun, FaMoon } from "react-icons/fa";
 
 export default function RDashboard() {
 	const dispatch = useDispatch();
@@ -100,6 +103,8 @@ export default function RDashboard() {
 
 	const toast = useToast();
 
+	const { colorMode, toggleColorMode } = useColorMode();
+
 	async function clockIn() {
 		await axios.get("http://localhost:3500/main/").then((res) => {
 			console.log(res.data[res.data.length - 1].clockOut);
@@ -161,7 +166,6 @@ export default function RDashboard() {
 	}
 
 	async function uploadAvatar() {
-		// alert("Asdsada");
 		const formData = new FormData();
 		formData.append("avatar", selectedFile);
 		console.log(selectedFile);
@@ -201,6 +205,14 @@ export default function RDashboard() {
 					boxShadow={"lg"}
 					flexDir={"column"}
 				>
+					<Flex>
+						<IconButton
+							icon={colorMode === "light" ? <FaSun /> : <FaMoon />}
+							isRound={"true"}
+							size={"lg"}
+							onClick={toggleColorMode}
+						></IconButton>
+					</Flex>
 					<Flex h={"60%"} flexDir={"column"}>
 						<Flex flexDir={"column"} alignItems={"center"} color={"gray.500"}>
 							<Flex p={4}>
@@ -211,6 +223,7 @@ export default function RDashboard() {
 								</Text>
 							</Flex>
 							<Spacer />
+
 							<Avatar src={userSelector.avatar_url} />
 							<Spacer />
 
